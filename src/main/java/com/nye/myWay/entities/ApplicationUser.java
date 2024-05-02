@@ -21,7 +21,7 @@ public class ApplicationUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-    private String userName;
+    private String username;
     //private String email;
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -57,7 +57,7 @@ public class ApplicationUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return username;
     }
 
     @Override
