@@ -4,10 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,33 +26,21 @@ public class ApplicationUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+    private String name;
     private String username;
-    //private String email;
+    private String email;
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_role_junction",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")}
-    )
-    private Set<Role> authorities;
-    //@CreationTimestamp
-    //private LocalDateTime createdAt;
-    //private String name;
-    //private LocalDate birthDate;
-    //private String city;
-    //private String street;
-    //private String bankAccount;
-    //@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    //private Buyer buyer;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    //@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    //private Seller seller;
-
+    @OneToOne(mappedBy = "applicationUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

@@ -1,29 +1,66 @@
 package com.nye.myWay.services;
 
+import com.nye.myWay.dto.LoginDTO;
+import com.nye.myWay.dto.RegisterDTO;
 import com.nye.myWay.entities.ApplicationUser;
+import com.nye.myWay.entities.AuthenticationResponse;
 import com.nye.myWay.entities.Role;
+import com.nye.myWay.exception.UserNameAlreadyTakenException;
+import com.nye.myWay.exception.UserNameMissingException;
+import com.nye.myWay.exception.UserNotFoundException;
+import com.nye.myWay.repositories.UserRepository;
+import com.nye.myWay.security.JwtUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService{
+    @Autowired
+    private JwtUtilities jwtTokenProvider;
+    @Autowired
+    private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    @Autowired
+    private UserRepository userRepository;
 
-        System.out.println("In the UserDetailService");
-        if(!username.equals("Ethan")) throw new UsernameNotFoundException("Not Ethan");
-        Set<Role> roles = new HashSet<>();
-        roles.add(new Role(1L, "USER"));
-        return new ApplicationUser(1L, "Ethan", passwordEncoder.encode("password"), roles);
+    public AuthenticationResponse register (RegisterDTO registerDto) throws UserNameMissingException, UserNameAlreadyTakenException {
+        if (registerDto.getUsername() == null || registerDto.getUsername().equals("")) {
+            throw new UserNameMissingException();
+        } else {
+            if (userRepository.findByUsername(registerDto.getUsername()).isPresent()) {
+                throw new UserNameAlreadyTakenException();
+            } else {
+                ApplicationUser applicationUser = new ApplicationUser();
+                applicationUser.setName(registerDto.getName());
+                applicationUser.setUsername(registerDto.getUsername());
+                applicationUser.setEmail(registerDto.getEmail());
+                applicationUser.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+                applicationUser.setRole(Role.USER);
+                userRepository.save(applicationUser);
+                String token = jwtTokenProvider.generateToken(applicationUser);
+                return new AuthenticationResponse(token);
+            }
+        }
+    }
+
+
+    public AuthenticationResponse authenticate (LoginDTO loginDTO) throws UserNotFoundException {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getUsername(),
+                        loginDTO.getPassword()
+                )
+        );
+        if(userRepository.findByUsername(loginDTO.getUsername()).isPresent()) {
+            String username = String.valueOf(userRepository.findByUsername(loginDTO.getUsername()).get());
+            String token = jwtTokenProvider.generateToken( userRepository.findByUsername(loginDTO.getUsername()).get());
+            return new AuthenticationResponse(token);
+            } else {
+            throw new UserNotFoundException();
+        }
     }
 }

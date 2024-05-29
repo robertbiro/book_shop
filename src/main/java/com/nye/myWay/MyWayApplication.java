@@ -1,40 +1,38 @@
 package com.nye.myWay;
 
+import com.nye.myWay.config.AdminConfig;
 import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.entities.Role;
-import com.nye.myWay.repositories.ApplicationUserRepository;
-import com.nye.myWay.repositories.RoleRepository;
+import com.nye.myWay.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @SpringBootApplication
-public class MyWayApplication {
+@RequiredArgsConstructor
+public class MyWayApplication implements CommandLineRunner {
+	private final AdminConfig adminConfig;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MyWayApplication.class, args);
-
-	}
-		@Bean
-		CommandLineRunner runner (RoleRepository roleRepository, ApplicationUserRepository applicationUserRepository,
-				PasswordEncoder passwordEncoder) {
-			return args -> {
-				if (roleRepository.findByAuthority("ADMIN").isPresent()) return;
-				Role adminRole = roleRepository.save(new Role("ADMIN"));
-				roleRepository.save(new Role("USER"));
-
-				Set<Role> roleSet = new HashSet<>();
-				roleSet.add(adminRole);
-				ApplicationUser admin = new ApplicationUser(1L, "admin",
-						passwordEncoder.encode("password"), roleSet);
-				applicationUserRepository.save(admin);
-
-			};
 		}
 
+	@Override
+	public void run(String... args) {
+		String adminUsername = adminConfig.getAdminUsername();
+		String adminPassword = adminConfig.getAdminPassword();
+
+		if(!userRepository.findByUsername(adminUsername).isPresent()) {
+			ApplicationUser adminUser = new ApplicationUser();
+			adminUser.setUsername(adminUsername);
+			adminUser.setPassword(passwordEncoder.encode(adminPassword));
+			adminUser.setEmail("admin@admin.com");
+			adminUser.setRole(Role.ADMIN);
+			userRepository.save(adminUser);
+		}
+	}
 }
