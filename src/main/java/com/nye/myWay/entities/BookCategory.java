@@ -5,5 +5,15 @@ public enum BookCategory {
     Horror,
     Thriller,
     Classics,
-    Novel
+    Comics,
+    Novel,
+    Poetry,
+    Mystery,
+    Psychology,
+    Religion,
+    Biography,
+    Business,
+    Art,
+    Travel,
+    Memoir
 }

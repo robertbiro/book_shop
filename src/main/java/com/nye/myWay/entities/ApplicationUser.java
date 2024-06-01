@@ -35,8 +35,22 @@ public class ApplicationUser implements UserDetails {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    //https://medium.com/@bectorhimanshu/spring-data-jpa-one-to-one-bidirectional-relationship-9ef3674ec2d7
+    @OneToOne(mappedBy = "applicationUser",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //bidirectional one-to-one relationship with Address
+    private Address address;
+
     @OneToOne(mappedBy = "applicationUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Cart cart;
+
+    //One-To-One Unidirectional Relationship Mapping
+    //https://medium.com/@bectorhimanshu/spring-data-jpa-one-to-oneunidirectional-relationship-0c6199bc6e8a
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "account_id", referencedColumnName = "accountId")
+    /// This means Foreign key will be created only in this table
+    // i.e. extra column 'account_id' will be created in the Accountumber table
+    //With FetchType.EAGER, it will fetch the details of the Child along with the Parent
+    private AccountNumber accountNumber;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

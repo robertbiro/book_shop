@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/home").permitAll()
                         .requestMatchers("/user/register").permitAll()
                         .requestMatchers("/user/login").permitAll()
+                        .requestMatchers("/user/**").hasRole("USER")
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated())
                 .userDetailsService(userDetailsService)
