@@ -73,11 +73,13 @@ public class JwtUtilities {
     //The generateToken method generates a JWT token based on the provided UserDetails object - it is the username.
     // It uses the getStringObjectMap method to retrieve the user's roles and add them as claims to the token.
     public String generateToken(UserDetails userDetails) {
-        return Jwts
-                .builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setIssuedAt(new Date(System.currentTimeMillis() + jwtExpiration))
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities());
+        return Jwts.builder()
+                .claims(claims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey())
                 .compact();
     }

@@ -15,8 +15,12 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    // TODO: 2024. 06. 02.
+    //URL
     private String author;
     private String description;
+    //Egy könyv mindegyik kiadása és változata (kivéve az utánnyomást) EGYEDI ISBN azonosítót kap
+    //ISBN 963-389-831-5
     private String isbn;
     private double price;
     private String publishingDate;

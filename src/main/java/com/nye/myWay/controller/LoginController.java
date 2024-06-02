@@ -7,24 +7,20 @@ import com.nye.myWay.exception.MyWayException;
 import com.nye.myWay.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/login")
 @CrossOrigin("*")
-public class AdminController {
+@AllArgsConstructor
+public class LoginController {
 
-    @Autowired
-    private UserService userService;
-    @GetMapping("/")
-    public String helloAdminController() {
-        return "Admin level access";
-    }
+    private final UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+    @PostMapping("/user")
+    public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         try {
             AuthenticationResponse authResponse = userService.authenticate(loginDTO);
             setTokenInCookie(response, authResponse.getToken());
@@ -34,6 +30,19 @@ public class AdminController {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }
     }
+
+    @PostMapping("/admin")
+    public ResponseEntity<?> loginAdmin(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+        try {
+            AuthenticationResponse authResponse = userService.authenticate(loginDTO);
+            setTokenInCookie(response, authResponse.getToken());
+            AuthResponseDTO responseMessage = new AuthResponseDTO("Login successful", authResponse.getToken(), loginDTO.getUsername());
+            return ResponseEntity.ok(responseMessage);
+        } catch (MyWayException myWayException) {
+            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
+        }
+    }
+
     private void setTokenInCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie("jwt", token);
         cookie.setAttribute("token", token);

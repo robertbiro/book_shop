@@ -1,7 +1,6 @@
 package com.nye.myWay.controller;
 
 import com.nye.myWay.dto.AuthResponseDTO;
-import com.nye.myWay.dto.LoginDTO;
 import com.nye.myWay.dto.RegisterDTO;
 import com.nye.myWay.entities.AuthenticationResponse;
 import com.nye.myWay.exception.MyWayException;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 @CrossOrigin("*")
 @AllArgsConstructor
-public class UserController {
+public class RegisterController {
     @Autowired
     private  UserService userService;
 
@@ -27,18 +26,6 @@ public class UserController {
             AuthenticationResponse authResponse = userService.register(registerDTO);
             setTokenInCookie(httpServletResponse, authResponse.getToken());
             AuthResponseDTO responseMessage = new AuthResponseDTO("Registration successful", authResponse.getToken(), registerDTO.getUsername());
-            return ResponseEntity.ok(responseMessage);
-        } catch (MyWayException myWayException) {
-            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
-        }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
-        try {
-            AuthenticationResponse authResponse = userService.authenticate(loginDTO);
-            setTokenInCookie(response, authResponse.getToken());
-            AuthResponseDTO responseMessage = new AuthResponseDTO("Login successful", authResponse.getToken(), loginDTO.getUsername());
             return ResponseEntity.ok(responseMessage);
         } catch (MyWayException myWayException) {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());

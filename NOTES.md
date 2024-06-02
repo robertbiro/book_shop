@@ -13,7 +13,8 @@ https://www.youtube.com/watch?v=RnZmeczS_DI&t=11s
 USEFUL -> To start:
 2024 ápr. 12.:(!!!!!)
 Users management Portal using Spring-boot, React.js, Mysql | Spring-Security, JWT, Roles, Auth
-https://www.youtube.com/watch?v=5_5oBtHWA5I
+https://www.youtube.com/watch?v=5_5oBtHWA5I or
+https://www.youtube.com/watch?v=GH7L4D8Q_ak
 
 Username/Password Authentication:
 https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#servlet-authentication-unpwd

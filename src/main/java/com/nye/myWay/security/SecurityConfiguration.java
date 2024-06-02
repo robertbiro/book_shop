@@ -33,13 +33,15 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer :: disable)
                 .cors(withDefaults())
                 .authorizeHttpRequests(request -> request
-                    //home accessible for everyone
-                    .requestMatchers("/home").permitAll()
+                        // home accessible for everyone
+                        .requestMatchers("/home").permitAll()
+                        .requestMatchers("/login/user").permitAll()
+                        .requestMatchers("/login/admin").permitAll()
                         .requestMatchers("/user/register").permitAll()
-                        .requestMatchers("/user/login").permitAll()
-                        .requestMatchers("/user/**").hasRole("USER")
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().authenticated())
+                        .requestMatchers("/user/**").hasAnyAuthority("USER")
+
+                        .requestMatchers("/admin/books/**").hasAuthority("ADMIN")
+                        .anyRequest().authenticated())
                 .userDetailsService(userDetailsService)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

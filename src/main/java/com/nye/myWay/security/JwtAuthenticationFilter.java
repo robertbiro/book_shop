@@ -26,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtilities jwtUtilities;
     private final UserDetailsService userDetailsService;
+
     //It is responsible for extracting the JWT token from the request header,
     // validating it, and setting the authenticated user in the SecurityContextHolder.
     @Override
@@ -33,16 +34,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
-            ) throws ServletException, IOException {
+    ) throws ServletException, IOException {
 
         String token = getJwtFromCookie(request);
-        if(token == null){
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String username = jwtUtilities.extractUsername(token);
-        if (username!= null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtUtilities.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -50,16 +51,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
 
     }
+
     //Token beolvasása cookie-ból
     //comes from: https://medium.com/spring-boot/cookie-based-jwt-authentication-with-spring-security-756f70664673
     private String getJwtFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
+                if ("jwt".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }

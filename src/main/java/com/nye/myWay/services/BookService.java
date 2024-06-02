@@ -1,12 +1,12 @@
 package com.nye.myWay.services;
 
 import com.nye.myWay.dto.BookDTO;
-import org.apache.maven.artifact.repository.Authentication;
-import org.springframework.stereotype.Service;
+import com.nye.myWay.exception.BookNotFoundException;
 
 
 public interface BookService {
 
-    BookDTO saveGoal(BookDTO  bookDTO, Authentication authentication);
+    BookDTO addBook(BookDTO  bookDTO);
+    BookDTO updateBook(Long bookId, BookDTO bookDTO) throws BookNotFoundException;
 
 }
