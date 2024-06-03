@@ -7,7 +7,6 @@ import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.exception.UserNotFoundException;
 import com.nye.myWay.repositories.AddressRepository;
 import com.nye.myWay.repositories.UserRepository;
-import jakarta.validation.constraints.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,9 +28,11 @@ public class AddressServiceImpl implements AddressService{
     @Override
     public AddressDTO addAddress(Principal principal, AddressDTO addressDTO) throws UserNotFoundException {
         ApplicationUser applicationUser = userRepository.findByUsername(principal.getName()).orElseThrow(() ->new UserNotFoundException());
+        System.out.println(principal.getName());
         Address address = modelMapper.map(addressDTO, Address.class);
         applicationUser.setAddress(address);
         address.setApplicationUser(applicationUser);
+        addressRepository.save(address);
         return modelMapper.map(address, AddressDTO.class);
     }
 

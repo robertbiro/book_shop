@@ -22,7 +22,7 @@ public class AdminBookController {
     @PostMapping("/add")
     public ResponseEntity<?> addNewBook(@RequestBody BookDTO bookDTO) {
         BookDTO newBookDTO = bookService.addBook(bookDTO);
-        System.out.println("HEllo");
+        System.out.println("Hello from add...........");
         BookResponseDTO bookResponseDTO = new BookResponseDTO("Book added successfully", newBookDTO);
         //https://codingnomads.com/spring-responseentity
         //return new ResponseEntity<>(bookResponseDTO, HttpStatus.CREATED);
@@ -32,9 +32,19 @@ public class AdminBookController {
     public ResponseEntity<?> updateBook(@PathVariable(name = "id") Long bookId,
                                         @RequestBody BookDTO bookDTO) {
         try {
-            System.out.println("Heello from put");
+            System.out.println("Hello from put!!!!!");
             BookDTO updatedBookDTO = bookService.updateBook(bookId, bookDTO);
             BookResponseDTO bookResponseDTO = new BookResponseDTO("Book is updated successfully", updatedBookDTO);
+            return ResponseEntity.ok(bookResponseDTO);
+        } catch (MyWayException myWayException) {
+            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable(name = "id") Long bookId) {
+        try {
+            BookDTO deletedBookDTO  = bookService.deleteBook(bookId);
+            BookResponseDTO bookResponseDTO = new BookResponseDTO("Book is deleted successfully", deletedBookDTO);
             return ResponseEntity.ok(bookResponseDTO);
         } catch (MyWayException myWayException) {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());

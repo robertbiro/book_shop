@@ -2,7 +2,6 @@ package com.nye.myWay.controller;
 
 import com.nye.myWay.dto.AddressDTO;
 import com.nye.myWay.dto.AddressResponseDTO;
-import com.nye.myWay.entities.Address;
 import com.nye.myWay.exception.MyWayException;
 import com.nye.myWay.services.AddressService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
-    @PostMapping("/addAddress")
+    @PostMapping("/add")
     public ResponseEntity<?> addAddress(@RequestBody AddressDTO addressDTO, Principal principal) {
         //In Spring security, the principal contains the name of the currently logged-in user.
         //It is an interface called AuthenticatedPrincipal. It has only one method, getName(),
@@ -35,7 +34,7 @@ public class AddressController {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }
     }
-    @GetMapping("/getAddress")
+    @GetMapping("/get")
     public ResponseEntity<?> getUserAddress(Principal principal) {
         try {
             AddressDTO addressDTO = addressService.getAddress(principal);
@@ -44,7 +43,7 @@ public class AddressController {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }
     }
-    @PutMapping("/update-address")
+    @PutMapping("/update")
     public ResponseEntity<?> updateAddress(@RequestBody AddressDTO addressDTO, Principal principal) {
         try {;
             AddressDTO updatedAddress = addressService.updateAddress(principal, addressDTO);

@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/login/user").permitAll()
                         .requestMatchers("/login/admin").permitAll()
                         .requestMatchers("/user/register").permitAll()
-                        .requestMatchers("/user/**").hasAnyAuthority("USER")
+                        .requestMatchers("/user/address/**").hasAnyAuthority("USER")
 
                         .requestMatchers("/admin/books/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())

@@ -77,4 +77,17 @@ public class BookServiceImpl implements BookService{
             throw new BookNotFoundException();
         }
     }
+
+    @Override
+    public BookDTO deleteBook(Long bookId) throws BookNotFoundException {
+        Optional<Book> optionalBook = bookRepository.findById(bookId);
+        if(optionalBook.isPresent()) {
+            Book deletedBook = bookRepository.findById(bookId).get();
+            BookDTO deletedBookDTO = modelMapper.map(deletedBook, BookDTO.class);
+            bookRepository.delete(deletedBook);
+            return deletedBookDTO;
+        } else {
+            throw new BookNotFoundException();
+        }
+    }
 }
