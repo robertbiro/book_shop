@@ -6,6 +6,9 @@ import com.nye.myWay.exception.BookNotFoundException;
 import com.nye.myWay.repositories.BookRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -89,5 +92,19 @@ public class BookServiceImpl implements BookService{
         } else {
             throw new BookNotFoundException();
         }
+    }
+
+    @Override
+    public Page<BookDTO> getFilteredBook(Integer page, Integer size, String direction, String orderBy) throws BookNotFoundException{
+        System.out.println(direction);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.valueOf(direction), orderBy);
+        System.out.println("hello");
+        Page<Book> foundBooks = bookRepository.findAll(pageRequest);
+        if (foundBooks.isEmpty()) {
+            throw new BookNotFoundException();
+        }
+        //Page interface has a -map function!!!
+        Page<BookDTO> bookDTOPage = foundBooks.map(book -> modelMapper.map(book, BookDTO.class));
+        return bookDTOPage;
     }
 }

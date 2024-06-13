@@ -1,7 +1,6 @@
 package com.nye.myWay.services;
 
 import com.nye.myWay.dto.AddressDTO;
-import com.nye.myWay.dto.AddressResponseDTO;
 import com.nye.myWay.entities.Address;
 import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.exception.UserNotFoundException;
@@ -49,22 +48,36 @@ public class AddressServiceImpl implements AddressService{
         ApplicationUser applicationUser = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException());
         Address address = applicationUser.getAddress();
 
-        if (addressDTO.getStreet() != null) {
+        //s     | s == null | s.isEmpty()          |
+        // +-------+-----------+----------------------+
+        //null  | true      | NullPointerException |
+        // ""   | false     | true                 |
+        // "foo"| false     | false
+
+        if (addressDTO.getStreet() != null && !addressDTO.getStreet().isEmpty()) {
             address.setStreet(addressDTO.getStreet());
         }
-        if (addressDTO.getCity() != null) {
+        if (addressDTO.getCity() != null && !addressDTO.getCity().isEmpty()) {
             address.setCity(addressDTO.getCity());
         }
-        if (addressDTO.getState() != null) {
+        if (addressDTO.getState() != null && !addressDTO.getState().isEmpty()) {
             address.setState(addressDTO.getState());
         }
-        if (addressDTO.getPostalCode() != null) {
+        if (addressDTO.getPostalCode() != null && !addressDTO.getPostalCode().isEmpty()) {
             address.setPostalCode(addressDTO.getPostalCode());
         }
-        if (addressDTO.getCountry() != null) {
+        if (addressDTO.getCountry() != null && !addressDTO.getCountry().isEmpty()) {
             address.setCountry(addressDTO.getCountry());
         }
         Address updatedAddress = addressRepository.save(address);
         return modelMapper.map(updatedAddress, AddressDTO.class);
+    }
+
+    @Override
+    public AddressDTO deleteAddress(Principal principal) throws UserNotFoundException {
+        ApplicationUser applicationUser = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException());
+        Address address = applicationUser.getAddress();
+        addressRepository.delete(address);
+        return getAddress(principal);
     }
 }

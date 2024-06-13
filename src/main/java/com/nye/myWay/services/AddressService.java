@@ -11,4 +11,5 @@ public interface AddressService {
     AddressDTO addAddress(Principal principal, AddressDTO addressDTO) throws UserNotFoundException;
     AddressDTO getAddress(Principal principal) throws UserNotFoundException;
     AddressDTO updateAddress(Principal principal, AddressDTO addressDTO) throws UserNotFoundException;
+    AddressDTO deleteAddress(Principal principal) throws UserNotFoundException;
 }

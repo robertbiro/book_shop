@@ -103,6 +103,7 @@ https://ololx.medium.com/partial-data-update-in-java-rest-services-1-332fdc62163
 PAGINATION:
 
 https://www.youtube.com/watch?v=6ur2DU9jyc0&list=PLoyb0HJlmv_kKDuTCZqBwUrKDXbGLPriw&index=3
+https://dev.to/brunbs/how-to-return-paginated-data-in-spring-boot-11cm
 //--------------------------------------------------------------------------------------
 
 Fullstack:
