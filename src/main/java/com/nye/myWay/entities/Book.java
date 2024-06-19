@@ -29,7 +29,4 @@ public class Book {
     private String language;
     private String publisher;
     private int quantity;
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
 }

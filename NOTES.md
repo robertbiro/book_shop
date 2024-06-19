@@ -110,3 +110,18 @@ Fullstack:
 
 Users management Portal using Spring-boot, React.js, Mysql | Spring-Security, JWT, Roles, Auth:
 https://www.youtube.com/watch?v=5_5oBtHWA5I
+
+React js Live Search With Real API | React js Live Search with Hooks | React Js tutorial:
+https://www.youtube.com/watch?v=7T75wqx1tHg
+//--------------------------------------------------------------------------------------
+
+Lazy:
+https://www.baeldung.com/spring-boot-lazy-initialization
+//--------------------------------------------------------------------------------------
+
+Cache:
+https://www.youtube.com/watch?v=fZilHxyj39Q
+//--------------------------------------------------------------------------------------
+
+Guide to Spring Email:
+https://www.baeldung.com/spring-email

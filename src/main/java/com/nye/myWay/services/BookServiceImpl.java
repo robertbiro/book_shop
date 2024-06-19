@@ -18,6 +18,8 @@ public class BookServiceImpl implements BookService{
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private CartItemService cartItemService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -107,4 +109,23 @@ public class BookServiceImpl implements BookService{
         Page<BookDTO> bookDTOPage = foundBooks.map(book -> modelMapper.map(book, BookDTO.class));
         return bookDTOPage;
     }
+
+    //-------------------------------------------------------------------------------------------------
+    //get reachable issue: quantity (storage) - books with same bookId in Cart
+    @Override
+    public int getReachableIssue(Long bookId) throws BookNotFoundException{
+        Optional<Book> optionalBook = bookRepository.findById(bookId);
+        if(optionalBook.isPresent()) {
+            int reservedBooks = cartItemService.getSameBookQuantityInCartItems(bookId);
+            return optionalBook.get().getQuantity() - reservedBooks;
+        } else {
+            throw new BookNotFoundException();
+        }
+    }
+
+    @Override
+    public boolean isBookAvailable(Long bookId, int quantity) throws BookNotFoundException {
+        return getReachableIssue(bookId) >= quantity;
+    }
+
 }

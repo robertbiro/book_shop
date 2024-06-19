@@ -1,9 +1,7 @@
 package com.nye.myWay.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +15,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter //@Data create toString it can cause problem, Stackoverflow with for example Address
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApplicationUser implements UserDetails {
@@ -49,7 +48,7 @@ public class ApplicationUser implements UserDetails {
     @JoinColumn(name = "account_id", referencedColumnName = "accountId")
     /// This means Foreign key will be created only in this table
     // i.e. extra column 'account_id' will be created in the Accountumber table
-    //With FetchType.EAGER, it will fetch the details of the Child along with the Parent
+    //With FetchType.EAGER, it will fetch the details of the Child along with the Parent!!!!!
     private AccountNumber accountNumber;
 
     @Override

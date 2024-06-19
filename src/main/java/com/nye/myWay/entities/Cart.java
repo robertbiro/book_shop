@@ -3,6 +3,7 @@ package com.nye.myWay.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 @Entity
 @Data
@@ -15,5 +16,5 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private ApplicationUser applicationUser;
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<Book> books;
+    private List<CartItem> booksInCart = new ArrayList<>();
 }
