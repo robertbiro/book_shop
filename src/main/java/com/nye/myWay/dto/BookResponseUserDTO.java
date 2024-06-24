@@ -1,16 +1,16 @@
 package com.nye.myWay.dto;
 
 import com.nye.myWay.entities.BookCategory;
-import com.nye.myWay.entities.Cart;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookDTO {
+public class BookResponseUserDTO {
 
     private String title;
     private String author;
@@ -23,6 +23,4 @@ public class BookDTO {
     private String language;
     private String publisher;
     private int quantity;
-    @ManyToOne
-    private Cart cart;
 }

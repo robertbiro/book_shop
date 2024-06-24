@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartResponseDTO {
+public class CartResponseUserDTO {
 
     private String message;
-    private CartReservedBookDTO cartReservedBookDTO;
+    private BookResponseUserDTO bookResponseUserDTO;
 
 }

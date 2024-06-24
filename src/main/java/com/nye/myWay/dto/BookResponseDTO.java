@@ -8,5 +8,5 @@ import lombok.Data;
 public class BookResponseDTO {
 
     private String message;
-    private BookDTO bookDTO;
+    private BookResponseAdminDTO bookResponseAdminDTO;
 }

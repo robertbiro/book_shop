@@ -1,6 +1,6 @@
 package com.nye.myWay.services;
 
-import com.nye.myWay.dto.BookDTO;
+import com.nye.myWay.dto.BookResponseAdminDTO;
 import com.nye.myWay.entities.Book;
 import com.nye.myWay.exception.BookNotFoundException;
 import com.nye.myWay.repositories.BookRepository;
@@ -24,80 +24,80 @@ public class BookServiceImpl implements BookService{
     @Autowired
     private ModelMapper modelMapper;
     @Override
-    public BookDTO addBook(BookDTO bookDTO) {
-        if (!bookRepository.findByIsbn(bookDTO.getIsbn()).isPresent()) {
-            Book newBook = modelMapper.map(bookDTO, Book.class);
+    public BookResponseAdminDTO addBook(BookResponseAdminDTO bookResponseAdminDTO) {
+        if (!bookRepository.findByIsbn(bookResponseAdminDTO.getIsbn()).isPresent()) {
+            Book newBook = modelMapper.map(bookResponseAdminDTO, Book.class);
             bookRepository.save(newBook);
         } else {
-            Book storedBook = bookRepository.findByIsbn(bookDTO.getIsbn()).get();
+            Book storedBook = bookRepository.findByIsbn(bookResponseAdminDTO.getIsbn()).get();
             storedBook.setQuantity(storedBook.getQuantity() + 1);
             bookRepository.save(storedBook);
         }
-        return modelMapper.map(bookRepository.findByIsbn(bookDTO.getIsbn()), BookDTO.class);
+        return modelMapper.map(bookRepository.findByIsbn(bookResponseAdminDTO.getIsbn()), BookResponseAdminDTO.class);
     }
 
     @Override
-    public BookDTO updateBook(Long bookId, BookDTO bookDTO) throws BookNotFoundException {
+    public BookResponseAdminDTO updateBook(Long bookId, BookResponseAdminDTO bookResponseAdminDTO) throws BookNotFoundException {
         Optional<Book> optionalBook = bookRepository.findById(bookId);
         if(optionalBook.isPresent()) {
             Book book = optionalBook.get();
 
-            if (bookDTO.getTitle() != null && !bookDTO.getTitle().isEmpty()) {
-                book.setTitle(bookDTO.getTitle());
+            if (bookResponseAdminDTO.getTitle() != null && !bookResponseAdminDTO.getTitle().isEmpty()) {
+                book.setTitle(bookResponseAdminDTO.getTitle());
             }
-            if (bookDTO.getAuthor() != null && !bookDTO.getAuthor().isEmpty()) {
-                book.setAuthor(bookDTO.getAuthor());
+            if (bookResponseAdminDTO.getAuthor() != null && !bookResponseAdminDTO.getAuthor().isEmpty()) {
+                book.setAuthor(bookResponseAdminDTO.getAuthor());
             }
-            if (bookDTO.getDescription() != null && !bookDTO.getDescription().isEmpty()) {
-                book.setDescription(bookDTO.getDescription());
+            if (bookResponseAdminDTO.getDescription() != null && !bookResponseAdminDTO.getDescription().isEmpty()) {
+                book.setDescription(bookResponseAdminDTO.getDescription());
             }
-            if (bookDTO.getIsbn() != null && !bookDTO.getIsbn().isEmpty()) {
-                book.setIsbn(bookDTO.getIsbn());
+            if (bookResponseAdminDTO.getIsbn() != null && !bookResponseAdminDTO.getIsbn().isEmpty()) {
+                book.setIsbn(bookResponseAdminDTO.getIsbn());
             }
-            if (bookDTO.getPrice() != 0.0) {
-                book.setPrice(bookDTO.getPrice());
+            if (bookResponseAdminDTO.getPrice() != 0.0) {
+                book.setPrice(bookResponseAdminDTO.getPrice());
             }
-            if (bookDTO.getPublishingDate() != null && !bookDTO.getPublishingDate().isEmpty()) {
-                book.setPublishingDate(bookDTO.getPublishingDate());
+            if (bookResponseAdminDTO.getPublishingDate() != null && !bookResponseAdminDTO.getPublishingDate().isEmpty()) {
+                book.setPublishingDate(bookResponseAdminDTO.getPublishingDate());
             }
-            if (bookDTO.getPublishingPlace() != null && !bookDTO.getPublishingPlace().isEmpty()) {
-                book.setPublishingPlace(bookDTO.getPublishingPlace());
+            if (bookResponseAdminDTO.getPublishingPlace() != null && !bookResponseAdminDTO.getPublishingPlace().isEmpty()) {
+                book.setPublishingPlace(bookResponseAdminDTO.getPublishingPlace());
             }
-            if (bookDTO.getBookCategory() != null) {
-                book.setBookCategory(bookDTO.getBookCategory());
+            if (bookResponseAdminDTO.getBookCategory() != null) {
+                book.setBookCategory(bookResponseAdminDTO.getBookCategory());
             }
-            if (bookDTO.getLanguage() != null && !bookDTO.getLanguage().isEmpty()) {
-                book.setLanguage(bookDTO.getLanguage());
+            if (bookResponseAdminDTO.getLanguage() != null && !bookResponseAdminDTO.getLanguage().isEmpty()) {
+                book.setLanguage(bookResponseAdminDTO.getLanguage());
             }
-            if (bookDTO.getPublisher() != null && !bookDTO.getPublisher().isEmpty()) {
-                book.setPublisher(bookDTO.getPublisher());
+            if (bookResponseAdminDTO.getPublisher() != null && !bookResponseAdminDTO.getPublisher().isEmpty()) {
+                book.setPublisher(bookResponseAdminDTO.getPublisher());
             }
-            if (bookDTO.getQuantity() != 0) {
-                book.setQuantity(bookDTO.getQuantity());
+            if (bookResponseAdminDTO.getQuantity() != 0) {
+                book.setQuantity(bookResponseAdminDTO.getQuantity());
             }
 
             Book updatedBook = bookRepository.save(book);
-            return modelMapper.map(updatedBook, BookDTO.class);
+            return modelMapper.map(updatedBook, BookResponseAdminDTO.class);
         } else {
             throw new BookNotFoundException();
         }
     }
 
     @Override
-    public BookDTO deleteBook(Long bookId) throws BookNotFoundException {
+    public BookResponseAdminDTO deleteBook(Long bookId) throws BookNotFoundException {
         Optional<Book> optionalBook = bookRepository.findById(bookId);
         if(optionalBook.isPresent()) {
             Book deletedBook = bookRepository.findById(bookId).get();
-            BookDTO deletedBookDTO = modelMapper.map(deletedBook, BookDTO.class);
+            BookResponseAdminDTO deletedBookResponseAdminDTO = modelMapper.map(deletedBook, BookResponseAdminDTO.class);
             bookRepository.delete(deletedBook);
-            return deletedBookDTO;
+            return deletedBookResponseAdminDTO;
         } else {
             throw new BookNotFoundException();
         }
     }
 
     @Override
-    public Page<BookDTO> getFilteredBook(Integer page, Integer size, String direction, String orderBy) throws BookNotFoundException{
+    public Page<BookResponseAdminDTO> getFilteredBook(Integer page, Integer size, String direction, String orderBy) throws BookNotFoundException{
         System.out.println(direction);
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.valueOf(direction), orderBy);
         System.out.println("hello");
@@ -106,7 +106,7 @@ public class BookServiceImpl implements BookService{
             throw new BookNotFoundException();
         }
         //Page interface has a -map function!!!
-        Page<BookDTO> bookDTOPage = foundBooks.map(book -> modelMapper.map(book, BookDTO.class));
+        Page<BookResponseAdminDTO> bookDTOPage = foundBooks.map(book -> modelMapper.map(book, BookResponseAdminDTO.class));
         return bookDTOPage;
     }
 
@@ -128,4 +128,12 @@ public class BookServiceImpl implements BookService{
         return getReachableIssue(bookId) >= quantity;
     }
 
+    @Override
+    public Book getBook(Long bookId) throws BookNotFoundException {
+        if (bookRepository.findById(bookId).isPresent()) {
+            return bookRepository.findById(bookId).get();
+        } else {
+            throw new BookNotFoundException();
+        }
+    }
 }

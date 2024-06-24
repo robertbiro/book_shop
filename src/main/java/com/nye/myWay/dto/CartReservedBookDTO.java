@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CartReservedBookDTO {
 
-    private String title;
-    private String isbn;
+    private BookResponseUserDTO bookResponseUserDTO;
     private int quantity;
 }
