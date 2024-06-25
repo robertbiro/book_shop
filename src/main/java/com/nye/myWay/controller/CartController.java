@@ -2,8 +2,8 @@ package com.nye.myWay.controller;
 
 import com.nye.myWay.dto.BookResponseUserDTO;
 import com.nye.myWay.dto.CartDTO;
-import com.nye.myWay.dto.CartReservedBookDTO;
-import com.nye.myWay.dto.CartResponseUserDTO;
+import com.nye.myWay.dto.CartResponseUserAllBookDTO;
+import com.nye.myWay.dto.CartResponseUserOneBookDTO;
 import com.nye.myWay.exception.MyWayException;
 import com.nye.myWay.exception.NotEnoughBookException;
 import com.nye.myWay.services.CartItemService;
@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user/cart")
@@ -31,8 +33,8 @@ public class CartController {
     public ResponseEntity<?> addBookToCart(@RequestBody CartDTO cartDTO, Principal principal) {
         try {
             BookResponseUserDTO bookResponseUserDTO = cartService.addBookToCart(cartDTO, principal);
-            CartResponseUserDTO cartResponseUserDTO = new CartResponseUserDTO("Books added to cart successfully", bookResponseUserDTO);
-            return ResponseEntity.ok(cartResponseUserDTO);
+            CartResponseUserOneBookDTO cartResponseUserOneBookDTO = new CartResponseUserOneBookDTO("Books added to cart successfully", bookResponseUserDTO);
+            return ResponseEntity.ok(cartResponseUserOneBookDTO);
         } catch (NotEnoughBookException notEnoughBookException) {
             String errorMessage = notEnoughBookException.getMessage() + notEnoughBookException.getAvailableQuantity();
             return ResponseEntity.status(notEnoughBookException.getStatus()).body(errorMessage);
@@ -44,11 +46,21 @@ public class CartController {
     public ResponseEntity<?> increaseIssueInCart(@PathVariable("id") Long bookId, Principal principal) {
         try {
             BookResponseUserDTO bookResponseUserDTO = cartItemService.increaseCartItemQuantityByButton(bookId, principal);
-            CartResponseUserDTO cartResponseUserDTO = new CartResponseUserDTO("Book items increased successfully", bookResponseUserDTO);
-            return ResponseEntity.ok(cartResponseUserDTO);
+            CartResponseUserOneBookDTO cartResponseUserOneBookDTO = new CartResponseUserOneBookDTO("Book items increased successfully", bookResponseUserDTO);
+            return ResponseEntity.ok(cartResponseUserOneBookDTO);
         } catch (NotEnoughBookException notEnoughBookException) {
             String errorMessage = notEnoughBookException.getMessage() + notEnoughBookException.getAvailableQuantity();
             return ResponseEntity.status(notEnoughBookException.getStatus()).body(errorMessage);
+        } catch (MyWayException myWayException) {
+            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
+        }
+    }
+    @GetMapping("/getCartContent")
+    public ResponseEntity<?> getCartContent(Principal principal) {
+        try {
+            List<BookResponseUserDTO> allBookInCartByUser = cartService.getCartContentByUser(principal);
+            CartResponseUserAllBookDTO cartResponseUserAllBookDTO = new CartResponseUserAllBookDTO("The curent content of your Cart: ", allBookInCartByUser);
+            return ResponseEntity.ok(cartResponseUserAllBookDTO);
         } catch (MyWayException myWayException) {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }

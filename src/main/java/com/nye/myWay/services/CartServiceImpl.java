@@ -2,23 +2,25 @@ package com.nye.myWay.services;
 
 import com.nye.myWay.dto.BookResponseUserDTO;
 import com.nye.myWay.dto.CartDTO;
+import com.nye.myWay.dto.CartResponseUserAllBookDTO;
 import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.entities.Book;
 import com.nye.myWay.entities.Cart;
 import com.nye.myWay.entities.CartItem;
 import com.nye.myWay.exception.BookNotFoundException;
+import com.nye.myWay.exception.CartNotFoundException;
 import com.nye.myWay.exception.NotEnoughBookException;
 import com.nye.myWay.exception.UserNotFoundException;
-import com.nye.myWay.repositories.BookRepository;
 import com.nye.myWay.repositories.CartItemRepository;
 import com.nye.myWay.repositories.CartRepository;
-import com.nye.myWay.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +29,7 @@ public class CartServiceImpl implements CartService{
     @Autowired
     private CartRepository cartRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
     @Lazy
     //In contrast, when we configure a bean with lazy initialization,
@@ -51,7 +53,7 @@ public class CartServiceImpl implements CartService{
     //CartItem means a "wishes" or a reservation, so not an order yet.
     @Override
     public BookResponseUserDTO addBookToCart(CartDTO cartDTO, Principal principal) throws UserNotFoundException, BookNotFoundException, NotEnoughBookException {
-        ApplicationUser applicationUser = userRepository.findByUsername(principal.getName()).orElseThrow(() ->new UserNotFoundException());
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
         Long userId = applicationUser.getId();
         Book reservedBook = bookService.getBook(cartDTO.getBookId());
         int availableQuantity = reservedBook.getQuantity() - cartItemService.getSameBookQuantityInCartItems(cartDTO.getBookId());
@@ -90,7 +92,31 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
+    //if the Optional<Cart> doesn't exist:
+    // 1) to handle with exception or
+    // 2) create a Cart - it happens above
     public Optional<Cart> findCartByUserId(Long userId) {
         return cartRepository.findCartByUserId(userId);
+    }
+
+    @Override
+    public List<BookResponseUserDTO> getCartContentByUser(Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException {
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
+        Long userId = applicationUser.getId();
+        Optional<Cart> optionalCart = findCartByUserId(userId);
+        List<BookResponseUserDTO> allBookInCartByUser = new ArrayList<>();
+        if(optionalCart.isPresent()) {
+            List<Long> allBookIdInCartByUser = cartItemService.findAllBookIdByUserId(userId);
+            for (Long bookId : allBookIdInCartByUser) {
+                Book reservedBook = bookService.getBook(bookId);
+                BookResponseUserDTO bookResponseUserDTO = modelMapper.map(reservedBook, BookResponseUserDTO.class);
+                //add the current reserved quantity of book based on cartItem
+                bookResponseUserDTO.setQuantity(cartItemService.getCurrentBookQuantityOfUser(bookId, userId));
+                allBookInCartByUser.add(bookResponseUserDTO);
+            }
+        } else {
+            throw new CartNotFoundException();
+        }
+        return allBookInCartByUser;
     }
 }

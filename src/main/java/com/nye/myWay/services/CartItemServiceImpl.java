@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -116,5 +117,10 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public void decreaseCartItemQuantity(Long cartItemId) {
 
+    }
+
+    @Override
+    public List<Long> findAllBookIdByUserId(Long userId) {
+        return cartItemRepository.findAllBookIdByUserId(userId);
     }
 }

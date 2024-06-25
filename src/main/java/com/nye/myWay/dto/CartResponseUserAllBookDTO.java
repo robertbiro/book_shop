@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartResponseUserDTO {
+public class CartResponseUserAllBookDTO {
 
     private String message;
-    private BookResponseUserDTO bookResponseUserDTO;
+    private List<BookResponseUserDTO> allBookResponseUserDTO;
 
 }

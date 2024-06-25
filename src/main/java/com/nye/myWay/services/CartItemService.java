@@ -9,6 +9,7 @@ import com.nye.myWay.exception.NotEnoughBookException;
 import com.nye.myWay.exception.UserNotFoundException;
 
 import java.security.Principal;
+import java.util.List;
 
 public interface CartItemService {
 
@@ -20,4 +21,5 @@ public interface CartItemService {
     BookResponseUserDTO increaseCartItemQuantityByButton(Long bookId, Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException, NotEnoughBookException;
     Integer getCurrentBookQuantityOfUser(Long bookId, Long userId);
     void decreaseCartItemQuantity(Long cartItemId);
+    List<Long> findAllBookIdByUserId(Long userId);
 }

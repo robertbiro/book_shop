@@ -86,4 +86,10 @@ public class UserServiceImpl implements UserService{
         userRepository.save(applicationUser);
 
     }
+
+    @Override
+    public ApplicationUser getUserByPrincipal(Principal principal) throws UserNotFoundException {
+        ApplicationUser applicationUser = userRepository.findByUsername(principal.getName()).orElseThrow(() ->new UserNotFoundException());
+        return applicationUser;
+    }
 }
