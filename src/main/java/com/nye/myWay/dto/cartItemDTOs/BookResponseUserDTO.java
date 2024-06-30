@@ -1,4 +1,4 @@
-package com.nye.myWay.dto;
+package com.nye.myWay.dto.cartItemDTOs;
 
 import com.nye.myWay.entities.BookCategory;
 import lombok.AllArgsConstructor;

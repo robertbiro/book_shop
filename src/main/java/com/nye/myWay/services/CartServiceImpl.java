@@ -1,16 +1,12 @@
 package com.nye.myWay.services;
 
-import com.nye.myWay.dto.BookResponseUserDTO;
+import com.nye.myWay.dto.cartItemDTOs.BookResponseUserDTO;
 import com.nye.myWay.dto.CartDTO;
-import com.nye.myWay.dto.CartResponseUserAllBookDTO;
 import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.entities.Book;
 import com.nye.myWay.entities.Cart;
 import com.nye.myWay.entities.CartItem;
-import com.nye.myWay.exception.BookNotFoundException;
-import com.nye.myWay.exception.CartNotFoundException;
-import com.nye.myWay.exception.NotEnoughBookException;
-import com.nye.myWay.exception.UserNotFoundException;
+import com.nye.myWay.exception.*;
 import com.nye.myWay.repositories.CartItemRepository;
 import com.nye.myWay.repositories.CartRepository;
 import org.modelmapper.ModelMapper;
@@ -29,6 +25,8 @@ public class CartServiceImpl implements CartService{
     @Autowired
     private CartRepository cartRepository;
     @Autowired
+    private CartItemRepository cartItemRepository;
+    @Autowired
     private UserService userService;
     @Autowired
     @Lazy
@@ -44,21 +42,18 @@ public class CartServiceImpl implements CartService{
     private CartItemService cartItemService;
 
     @Autowired
-    private CartItemRepository cartItemRepository;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     //Cart belongs to the user, every cart can contain more CartItem
     //CartItem means a "wishes" or a reservation, so not an order yet.
     @Override
-    public BookResponseUserDTO addBookToCart(CartDTO cartDTO, Principal principal) throws UserNotFoundException, BookNotFoundException, NotEnoughBookException {
+    public BookResponseUserDTO addBookToCart(CartDTO cartDTO, Principal principal) throws UserNotFoundException, BookNotFoundException, NotEnoughBookException, CartItemNotFoundException {
         ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
         Long userId = applicationUser.getId();
         Book reservedBook = bookService.getBook(cartDTO.getBookId());
         int availableQuantity = reservedBook.getQuantity() - cartItemService.getSameBookQuantityInCartItems(cartDTO.getBookId());
         if (bookService.isBookAvailable(cartDTO.getBookId(), cartDTO.getQuantity())) {
-            //dynamic approach!!!!!!!!!!!!!!!!!!!!
+            //dynamic approach!!!!!!!!!!!!!!!!!!!! -> if user has cartId it must have cartItemId
             Optional<Cart> optionalCart = cartRepository.findCartByUserId(userId);
             Cart cart;
             if (optionalCart.isPresent()) {
@@ -71,9 +66,9 @@ public class CartServiceImpl implements CartService{
                 cartRepository.save(cart);
             }
             //If user has Cart and CartItem AND the bookId exists in CartItem -> if push the "Add to the Cart" button again
-            if(cartItemService.userHasSameBookInCartItem(cartDTO.getBookId(),userId) != null) {
+            if(cartItemService.getCartItemIAtSameBook(cartDTO.getBookId(),userId) != null) {
                 Long cartId = cart.getId();
-                Long cartItemId = cartItemRepository.findItemByCartIdAndBookId(cartId, cartDTO.getBookId()).get().getId();
+                Long cartItemId = cartItemService.findItemByCartIdAndBookId(cartId, cartDTO.getBookId());
                 cartItemService.increaseCartItemQuantityByCart(cartItemId);
             //If user has Cart and CartItem BUT the bookId doesn't exist in CartItem
             } else {
@@ -100,7 +95,7 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public List<BookResponseUserDTO> getCartContentByUser(Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException {
+    public List<BookResponseUserDTO> getCartContentByUser(Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException, CartItemNotFoundException {
         ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
         Long userId = applicationUser.getId();
         Optional<Cart> optionalCart = findCartByUserId(userId);
@@ -118,5 +113,19 @@ public class CartServiceImpl implements CartService{
             throw new CartNotFoundException();
         }
         return allBookInCartByUser;
+    }
+
+    @Override
+    public void deleteCart(Principal principal) throws UserNotFoundException, CartNotFoundException, CartItemNotFoundException, BookNotFoundException {
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
+        Long userId = applicationUser.getId();
+        Optional<Cart> optionalCart = findCartByUserId(userId);
+        if (optionalCart.isPresent()) {
+            Cart cart = optionalCart.get();
+            System.out.println(cart.getId());
+            cartRepository.delete(cart);
+        } else {
+            throw new CartNotFoundException();
+        }
     }
 }

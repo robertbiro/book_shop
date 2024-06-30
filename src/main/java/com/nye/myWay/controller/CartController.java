@@ -1,9 +1,9 @@
 package com.nye.myWay.controller;
 
-import com.nye.myWay.dto.BookResponseUserDTO;
-import com.nye.myWay.dto.CartDTO;
-import com.nye.myWay.dto.CartResponseUserAllBookDTO;
-import com.nye.myWay.dto.CartResponseUserOneBookDTO;
+import com.nye.myWay.dto.*;
+import com.nye.myWay.dto.cartItemDTOs.BookResponseUserDTO;
+import com.nye.myWay.dto.cartItemDTOs.CartItemChangeDTO;
+import com.nye.myWay.dto.cartItemDTOs.DecreaseCartItemDTO;
 import com.nye.myWay.exception.MyWayException;
 import com.nye.myWay.exception.NotEnoughBookException;
 import com.nye.myWay.services.CartItemService;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -55,12 +54,37 @@ public class CartController {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }
     }
+
+    @PostMapping("/decrease/{id}")
+    public ResponseEntity<?> decreaseIssueInCart(@PathVariable("id") Long bookId, Principal principal) {
+        try {
+            DecreaseCartItemDTO decreaseCartItemDTO = cartItemService.decreaseCartItemQuantityByButton(bookId, principal);
+            if (!decreaseCartItemDTO.isDelete()) {
+                return ResponseEntity.ok(new CartItemChangeDTO<>("Book items decreased successfully",decreaseCartItemDTO));
+            } else {
+                return ResponseEntity.ok(new CartItemChangeDTO<>("CartItem is deleted", null));
+            }
+        } catch (MyWayException myWayException) {
+            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
+        }
+    }
+
     @GetMapping("/getCartContent")
     public ResponseEntity<?> getCartContent(Principal principal) {
         try {
             List<BookResponseUserDTO> allBookInCartByUser = cartService.getCartContentByUser(principal);
-            CartResponseUserAllBookDTO cartResponseUserAllBookDTO = new CartResponseUserAllBookDTO("The curent content of your Cart: ", allBookInCartByUser);
+            CartResponseUserAllBookDTO cartResponseUserAllBookDTO = new CartResponseUserAllBookDTO("The current content of your Cart: ", allBookInCartByUser);
             return ResponseEntity.ok(cartResponseUserAllBookDTO);
+        } catch (MyWayException myWayException) {
+            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
+        }
+    }
+    @DeleteMapping("/deleteCart")
+    public ResponseEntity<?> deleteCart(Principal principal) {
+        try {
+            cartService.deleteCart(principal);
+            MessageDTO messageDTO = new MessageDTO("Successful.The Cart is empty.");
+            return ResponseEntity.ok(messageDTO);
         } catch (MyWayException myWayException) {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }

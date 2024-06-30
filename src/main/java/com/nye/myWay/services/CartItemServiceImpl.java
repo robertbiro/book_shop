@@ -1,18 +1,14 @@
 package com.nye.myWay.services;
 
-import com.nye.myWay.dto.BookResponseUserDTO;
+import com.nye.myWay.dto.cartItemDTOs.BookResponseUserDTO;
 import com.nye.myWay.dto.CartDTO;
+import com.nye.myWay.dto.cartItemDTOs.DecreaseCartItemDTO;
 import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.entities.Book;
 import com.nye.myWay.entities.Cart;
 import com.nye.myWay.entities.CartItem;
-import com.nye.myWay.exception.BookNotFoundException;
-import com.nye.myWay.exception.CartNotFoundException;
-import com.nye.myWay.exception.NotEnoughBookException;
-import com.nye.myWay.exception.UserNotFoundException;
+import com.nye.myWay.exception.*;
 import com.nye.myWay.repositories.CartItemRepository;
-import com.nye.myWay.repositories.CartRepository;
-import com.nye.myWay.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -28,15 +24,12 @@ public class CartItemServiceImpl implements CartItemService {
     @Autowired
     private CartItemRepository cartItemRepository;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CartRepository cartRepository;
+    private UserService userService;
     @Autowired
     private CartService cartService;
     @Autowired
     @Lazy
     private BookService bookService;
-
     @Autowired
     private ModelMapper modelMapper;
 
@@ -58,14 +51,19 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public Long userHasSameBookInCartItem(Long bookId, Long userId) {
-        Long cartId = cartService.findCartByUserId(userId).get().getId();
-        Optional<CartItem> cartItem = cartItemRepository.findItemByCartIdAndBookId(cartId, bookId);
-        if (cartItem.isPresent()) {
-            return cartItem.get().getId();
+    public CartItem getItemByCartIdAndBookId(Long cartId, Long bookId) throws CartItemNotFoundException {
+        Optional<CartItem> optionalCartItem = cartItemRepository.findItemByCartIdAndBookId(cartId, bookId);
+        if(optionalCartItem.isPresent()) {
+            return optionalCartItem.get();
         } else {
-            return null;
+            throw new CartItemNotFoundException();
         }
+    }
+
+    @Override
+    public Long getCartItemIAtSameBook(Long bookId, Long userId) {
+        Long cartId = cartService.findCartByUserId(userId).get().getId();
+        return cartItemRepository.findItemIdByCartIdAndBookId(cartId, bookId);
     }
 
     @Override
@@ -81,12 +79,13 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public BookResponseUserDTO increaseCartItemQuantityByButton(Long bookId, Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException, NotEnoughBookException {
-        ApplicationUser applicationUser = userRepository.findByUsername(principal.getName()).orElseThrow(() ->new UserNotFoundException());
-        Optional<Cart> optionalCart = cartRepository.findCartByUserId(applicationUser.getId());
+    public BookResponseUserDTO increaseCartItemQuantityByButton(Long bookId, Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException, NotEnoughBookException, CartItemNotFoundException {
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
+        Optional<Cart> optionalCart = cartService.findCartByUserId(applicationUser.getId());
         if(optionalCart.isPresent()) {
             Long cartId = cartService.findCartByUserId(applicationUser.getId()).get().getId();
-            Long cartItemId = cartItemRepository.findItemByCartIdAndBookId(cartId, bookId).get().getId();
+            //// TODO: 2024. 06. 29. nedd an axception
+            Long cartItemId = getItemByCartIdAndBookId(cartId, bookId).getId();
             Book reservedBook;
             CartItem cartItem = getCartItem(cartItemId);
             if(bookService.isBookAvailable(bookId, 1)) {
@@ -108,19 +107,55 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public Integer getCurrentBookQuantityOfUser(Long bookId, Long userId) {
+    public Integer getCurrentBookQuantityOfUser(Long bookId, Long userId) throws CartItemNotFoundException {
         Long cartId = cartService.findCartByUserId(userId).get().getId();
-        Optional<CartItem> cartItem = cartItemRepository.findItemByCartIdAndBookId(cartId, bookId);
-        return cartItem.get().getQuantity();
+        CartItem cartItem = getItemByCartIdAndBookId(cartId, bookId);
+        return cartItem.getQuantity();
     }
 
     @Override
-    public void decreaseCartItemQuantity(Long cartItemId) {
-
+    public DecreaseCartItemDTO decreaseCartItemQuantityByButton(Long bookId, Principal principal) throws UserNotFoundException, BookNotFoundException, CartNotFoundException, CartItemNotFoundException {
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
+        Optional<Cart> optionalCart = cartService.findCartByUserId(applicationUser.getId());
+        if (optionalCart.isPresent()) {
+            Long cartId = cartService.findCartByUserId(applicationUser.getId()).get().getId();
+            Long cartItemId = getItemByCartIdAndBookId(cartId, bookId).getId();
+            Book reservedBook = bookService.getBook(bookId);
+            CartItem cartItem = getCartItem(cartItemId);
+            if(cartItem.getQuantity() > 1) {
+                cartItem.setQuantity(cartItem.getQuantity() - 1);
+                cartItemRepository.save(cartItem);
+                //To response DTO about the last activity with Cart (so it is not the content of Cart!!!):
+                BookResponseUserDTO bookResponseUserDTO = modelMapper.map(reservedBook, BookResponseUserDTO.class);
+                bookResponseUserDTO.setQuantity(cartItem.getQuantity());
+                return new DecreaseCartItemDTO<>(false, bookResponseUserDTO);
+            } else {
+                //if quantity is zero, the cartItem will be deleted
+                return deleteCartItem(cartItemId);
+            }
+        }  else {
+            throw new CartNotFoundException();
+        }
+    }
+    //this method are used by "-" on frontend, and a button to delete an book from cart.
+    @Override
+    public DecreaseCartItemDTO deleteCartItem(Long cartItemId) throws CartItemNotFoundException {
+        Optional<CartItem> optionalCartItem = cartItemRepository.findById(cartItemId);
+        if(optionalCartItem.isPresent()) {
+            cartItemRepository.delete(optionalCartItem.get());
+            return new DecreaseCartItemDTO<>(true, null);
+        } else {
+            throw new CartItemNotFoundException();
+        }
     }
 
     @Override
     public List<Long> findAllBookIdByUserId(Long userId) {
         return cartItemRepository.findAllBookIdByUserId(userId);
+    }
+
+    @Override
+    public Long findItemByCartIdAndBookId(Long cartId, Long bookId) {
+        return cartItemRepository.findItemByCartIdAndBookId(cartId, bookId).get().getId();
     }
 }
