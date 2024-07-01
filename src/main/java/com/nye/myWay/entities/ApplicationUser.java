@@ -51,6 +51,9 @@ public class ApplicationUser implements UserDetails {
     //With FetchType.EAGER, it will fetch the details of the Child along with the Parent!!!!!
     private AccountNumber accountNumber;
 
+    @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Reservation> reservations = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
