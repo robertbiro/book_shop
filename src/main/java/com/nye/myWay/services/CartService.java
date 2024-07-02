@@ -1,7 +1,7 @@
 package com.nye.myWay.services;
 
 import com.nye.myWay.dto.cartItemDTOs.BookResponseUserDTO;
-import com.nye.myWay.dto.CartDTO;
+import com.nye.myWay.dto.cartDTOs.CartDTO;
 import com.nye.myWay.entities.Cart;
 import com.nye.myWay.exception.*;
 

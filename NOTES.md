@@ -125,3 +125,7 @@ https://www.youtube.com/watch?v=fZilHxyj39Q
 
 Guide to Spring Email:
 https://www.baeldung.com/spring-email
+//--------------------------------------------------------------------------------------
+
+Projections:
+https://medium.com/javarevisited/mastering-projections-in-spring-data-jpa-a-comprehensive-introduction-7bc2e64e4c14

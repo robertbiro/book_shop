@@ -1,12 +1,12 @@
 package com.nye.myWay.services;
 
 import com.nye.myWay.dto.cartItemDTOs.BookResponseUserDTO;
+import com.nye.myWay.dto.projections.ReservedBookProjection;
+import com.nye.myWay.dto.reservedBookDTO.ReservedBookDTO;
 import com.nye.myWay.entities.ApplicationUser;
 import com.nye.myWay.entities.Book;
 import com.nye.myWay.entities.Reservation;
-import com.nye.myWay.exception.AvailableBookInStockException;
-import com.nye.myWay.exception.BookNotFoundException;
-import com.nye.myWay.exception.UserNotFoundException;
+import com.nye.myWay.exception.*;
 import com.nye.myWay.repositories.ReservationRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ReservationServiceImpl implements ReservationService{
@@ -44,5 +46,21 @@ public class ReservationServiceImpl implements ReservationService{
         } else {
             throw new AvailableBookInStockException();
         }
+    }
+
+    @Override
+    public List<ReservedBookDTO> getAllReservedBooksByUser(Principal principal) throws UserNotFoundException {
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
+        Long userId = applicationUser.getId();
+        List<ReservedBookProjection> reservedBookProjectionList = reservationRepository.getAllReservedBooksByUser(userId);
+        List<ReservedBookDTO> reservedBookDTOList = new ArrayList<>();
+        for (ReservedBookProjection projection : reservedBookProjectionList) {
+            ReservedBookDTO reservedBookDTO = new ReservedBookDTO();
+            //because projection return Book (getBook()) it must convert DTO:
+            reservedBookDTO.setBookResponseUserDTO(modelMapper.map(projection.getBook(), BookResponseUserDTO.class));
+            reservedBookDTO.setCreatedAt(projection.getCreatedAt());
+            reservedBookDTOList.add(reservedBookDTO);
+        }
+        return reservedBookDTOList;
     }
 }

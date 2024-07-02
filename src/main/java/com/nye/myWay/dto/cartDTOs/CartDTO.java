@@ -1,4 +1,4 @@
-package com.nye.myWay.dto;
+package com.nye.myWay.dto.cartDTOs;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
