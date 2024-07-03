@@ -40,16 +40,20 @@ public class ReservationController {
     public ResponseEntity<?> getAllReservedBook(Principal principal) {
         try {
             List<ReservedBookDTO> reservedBookDTOList = reservationService.getAllReservedBooksByUser(principal);
-            ReservedBookResponseUserAllBookDTO reservedBookResponseUserAllBookDTO = new ReservedBookResponseUserAllBookDTO<>();
+            //my soution:
+            //ReservedBookResponseUserAllBookDTO reservedBookResponseUserAllBookDTO = new ReservedBookResponseUserAllBookDTO<>();
+            /*a ReservedBookResponseUserAllBookDTO data mezője egy List<ReservedBookDTO> típusú objektumot tartalmaz.
+            Így a fordító ellenőrizheti a típusokat fordítási időben, és biztosíthatja a típusbiztonságot.
+            * */
+            ReservedBookResponseUserAllBookDTO<List<ReservedBookDTO>> reservedBookResponseUserAllBookDTO = new ReservedBookResponseUserAllBookDTO<>();
             if (reservedBookDTOList.isEmpty()) {
                 reservedBookResponseUserAllBookDTO.setMessage("You have not reserved book!");
                 reservedBookResponseUserAllBookDTO.setData(null);
-                return ResponseEntity.ok(reservedBookResponseUserAllBookDTO);
             } else {
                 reservedBookResponseUserAllBookDTO.setMessage("Your reserved book(s):");
                 reservedBookResponseUserAllBookDTO.setData(reservedBookDTOList);
-                return ResponseEntity.ok(reservedBookResponseUserAllBookDTO);
             }
+            return ResponseEntity.ok(reservedBookResponseUserAllBookDTO);
         } catch (MyWayException myWayException) {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }

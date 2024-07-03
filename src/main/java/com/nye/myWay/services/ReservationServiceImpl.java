@@ -38,8 +38,11 @@ public class ReservationServiceImpl implements ReservationService{
         if(reservedBook.getQuantity() == 0) {
             Reservation reservation = new Reservation();
             reservation.setBook(reservedBook);
-            reservation.setApplicationUser(applicationuser);
             reservation.setCreatedAt(LocalDateTime.now());
+
+            reservation.getUsers().add(applicationuser);
+            applicationuser.getReservations().add(reservation);
+
             reservationRepository.save(reservation);
             BookResponseUserDTO bookResponseUserDTO = modelMapper.map(reservedBook, BookResponseUserDTO.class);
             return bookResponseUserDTO;

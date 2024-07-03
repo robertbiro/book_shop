@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Setter
 @Getter
@@ -19,9 +22,8 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private ApplicationUser applicationUser;
+    @ManyToMany(mappedBy = "reservations")
+    private List<ApplicationUser> users = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "book_id")

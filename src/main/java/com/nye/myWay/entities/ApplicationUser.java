@@ -51,7 +51,9 @@ public class ApplicationUser implements UserDetails {
     //With FetchType.EAGER, it will fetch the details of the Child along with the Parent!!!!!
     private AccountNumber accountNumber;
 
-    @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(name = "reservation", joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "book_id"))
     private List<Reservation> reservations = new ArrayList<>();
 
     @Override

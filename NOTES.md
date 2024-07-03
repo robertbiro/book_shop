@@ -73,8 +73,8 @@ https://www.javaguides.net/2024/04/spring-security-principal.html
 
 Principal represents the user's identity, which can be the username, a user object, or any form of user identification. 
 It is a key reference for making authorization decisions and customizing user interactions based on the authenticated user's details.
-//--------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------
 Spring Data JPA One-To-One Bidirectional Relationship:
 
 https://medium.com/@bectorhimanshu/spring-data-jpa-one-to-one-bidirectional-relationship-9ef3674ec2d7
@@ -82,30 +82,27 @@ https://www.javaguides.net/2022/02/spring-data-jpa-one-to-one-bidirectional-mapp
 (to which field belong the "mappedBy" its Repository will store the whole: .save())
 
 //--------------------------------------------------------------------------------------
-
 ModelMapper:
 
 https://www.baeldung.com/java-modelmapper
 https://www.geeksforgeeks.org/how-to-use-modelmapper-in-spring-boot-with-example-project/
 
 //--------------------------------------------------------------------------------------
-
 Dynamically ignore fields while serializing Java Object to JSON:
 
 https://iamvickyav.medium.com/spring-boot-dynamically-ignore-fields-while-converting-java-object-to-json-e8d642088f55
-
 //--------------------------------------------------------------------------------------
-
 partial data update:
-https://ololx.medium.com/partial-data-update-in-java-rest-services-1-332fdc621631
-//--------------------------------------------------------------------------------------
 
+https://ololx.medium.com/partial-data-update-in-java-rest-services-1-332fdc621631
+
+//--------------------------------------------------------------------------------------
 PAGINATION:
 
 https://www.youtube.com/watch?v=6ur2DU9jyc0&list=PLoyb0HJlmv_kKDuTCZqBwUrKDXbGLPriw&index=3
 https://dev.to/brunbs/how-to-return-paginated-data-in-spring-boot-11cm
-//--------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------
 Fullstack:
 
 Users management Portal using Spring-boot, React.js, Mysql | Spring-Security, JWT, Roles, Auth:
@@ -113,19 +110,31 @@ https://www.youtube.com/watch?v=5_5oBtHWA5I
 
 React js Live Search With Real API | React js Live Search with Hooks | React Js tutorial:
 https://www.youtube.com/watch?v=7T75wqx1tHg
-//--------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------
 Lazy:
 https://www.baeldung.com/spring-boot-lazy-initialization
-//--------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------
 Cache:
 https://www.youtube.com/watch?v=fZilHxyj39Q
-//--------------------------------------------------------------------------------------
+https://www.altkomsoftware.com/blog/spring-cache-introduction-and-use/
+https://www.javatpoint.com/spring-boot-caching
 
+//--------------------------------------------------------------------------------------
 Guide to Spring Email:
 https://www.baeldung.com/spring-email
-//--------------------------------------------------------------------------------------
+https://medium.com/@seefabanu/sending-emails-through-spring-boot-a-comprehensive-guide-83a55c97fefd
 
+//--------------------------------------------------------------------------------------
 Projections:
 https://medium.com/javarevisited/mastering-projections-in-spring-data-jpa-a-comprehensive-introduction-7bc2e64e4c14
+
+//--------------------------------------------------------------------------------------
+On-to-many:
+https://medium.com/@burakkocakeu/in-spring-data-jpa-onetomany-what-are-these-fields-mappedby-fetch-cascade-and-orphanremoval-2655f4027c4f
+
+//--------------------------------------------------------------------------------------
+Many-to-many:
+https://medium.com/@arijit83work/manytomany-relationship-in-spring-boot-with-hibernate-and-jpa-35d7b4fdf3bf
+//--------------------------------------------------------------------------------------
