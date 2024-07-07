@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ReservationServiceImpl implements ReservationService{
@@ -32,23 +34,27 @@ public class ReservationServiceImpl implements ReservationService{
 
 
     @Override
-    public BookResponseUserDTO createReservation(Long bookId, Principal principal) throws BookNotFoundException, UserNotFoundException, AvailableBookInStockException {
+    public BookResponseUserDTO createReservation(Long bookId, Principal principal) throws BookNotFoundException, UserNotFoundException, AvailableBookInStockException, DuplicateReservationException {
         Book reservedBook = bookService.getBook(bookId);
         ApplicationUser applicationuser = userService.getUserByPrincipal(principal);
-        if(reservedBook.getQuantity() == 0) {
+        if (reservedBook.getQuantity() == 0) {
+
             Reservation reservation = new Reservation();
-            reservation.setBook(reservedBook);
+            reservation.setApplicationUser(applicationuser);
             reservation.setCreatedAt(LocalDateTime.now());
+            reservation.setBook(reservedBook);
 
-            reservation.getUsers().add(applicationuser);
-            applicationuser.getReservations().add(reservation);
-
+            List<Reservation> existingReservations = new ArrayList<>(reservationRepository.findAll());
+            for (Reservation item : existingReservations) {
+                if (item.equals(reservation)) {
+                    throw new DuplicateReservationException();
+                }
+            }
             reservationRepository.save(reservation);
             BookResponseUserDTO bookResponseUserDTO = modelMapper.map(reservedBook, BookResponseUserDTO.class);
             return bookResponseUserDTO;
-        } else {
+            }
             throw new AvailableBookInStockException();
-        }
     }
 
     @Override

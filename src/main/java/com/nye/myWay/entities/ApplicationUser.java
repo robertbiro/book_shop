@@ -8,10 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -51,9 +48,8 @@ public class ApplicationUser implements UserDetails {
     //With FetchType.EAGER, it will fetch the details of the Child along with the Parent!!!!!
     private AccountNumber accountNumber;
 
-    @ManyToMany
-    @JoinTable(name = "reservation", joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "book_id"))
+
+    @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Reservation> reservations = new ArrayList<>();
 
     @Override

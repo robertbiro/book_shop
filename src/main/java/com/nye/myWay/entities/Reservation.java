@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Setter
@@ -22,13 +23,26 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "reservations")
-    private List<ApplicationUser> users = new ArrayList<>();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Reservation that)) return false;
+        return Objects.equals(getApplicationUser(), that.getApplicationUser()) && Objects.equals(getBook(), that.getBook());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getApplicationUser(), getBook());
+    }
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private ApplicationUser applicationUser;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
 }
