@@ -12,4 +12,5 @@ public interface ReservationService {
 
     BookResponseUserDTO createReservation(Long bookId, Principal principal) throws BookNotFoundException, UserNotFoundException, AvailableBookInStockException, DuplicateReservationException;
     List<ReservedBookDTO> getAllReservedBooksByUser(Principal principal) throws UserNotFoundException;
+    BookResponseUserDTO deleteOneReservation(Long reservationId, Principal principal) throws UserNotFoundException, ReservedBookNotFoundException;
 }

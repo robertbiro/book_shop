@@ -58,4 +58,14 @@ public class ReservationController {
             return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
         }
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteOneReservedBook(@PathVariable("id") Long reservedBookId, Principal principal) {
+        try {
+            BookResponseUserDTO bookResponseUserDTO = reservationService.deleteOneReservation(reservedBookId, principal);
+            CartResponseUserOneBookDTO cartResponseUserOneBookDTO = new CartResponseUserOneBookDTO("Reserved book is deleted successfully", bookResponseUserDTO);
+            return ResponseEntity.ok().body(cartResponseUserOneBookDTO);
+        } catch (MyWayException myWayException) {
+            return ResponseEntity.status(myWayException.getStatus()).body(myWayException.getMessage());
+        }
+    }
 }

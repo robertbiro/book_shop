@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.ToDoubleBiFunction;
 
 @Service
 public class ReservationServiceImpl implements ReservationService{
@@ -47,6 +48,7 @@ public class ReservationServiceImpl implements ReservationService{
             List<Reservation> existingReservations = new ArrayList<>(reservationRepository.findAll());
             for (Reservation item : existingReservations) {
                 if (item.equals(reservation)) {
+                    System.out.println(item.getId());
                     throw new DuplicateReservationException();
                 }
             }
@@ -71,5 +73,19 @@ public class ReservationServiceImpl implements ReservationService{
             reservedBookDTOList.add(reservedBookDTO);
         }
         return reservedBookDTOList;
+    }
+
+    @Override
+    // TODO: 2024. 07. 09. : if user buy a reserved book, it must be deleted from reservation list
+    public BookResponseUserDTO deleteOneReservation(Long reservationId, Principal principal) throws UserNotFoundException, ReservedBookNotFoundException {
+        ApplicationUser applicationUser = userService.getUserByPrincipal(principal);
+        Reservation reservation = reservationRepository.findReservedBookById(reservationId).orElseThrow(ReservedBookNotFoundException::new);
+
+        if (!reservation.getApplicationUser().getId().equals(applicationUser.getId())) {
+            throw new ReservedBookNotFoundException();
+        }
+        BookResponseUserDTO reservedBook = modelMapper.map(reservation, BookResponseUserDTO.class);
+        reservationRepository.delete(reservation);
+        return reservedBook;
     }
 }

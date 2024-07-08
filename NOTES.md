@@ -137,4 +137,6 @@ https://medium.com/@burakkocakeu/in-spring-data-jpa-onetomany-what-are-these-fie
 //--------------------------------------------------------------------------------------
 Many-to-many:
 https://medium.com/@arijit83work/manytomany-relationship-in-spring-boot-with-hibernate-and-jpa-35d7b4fdf3bf
+https://www.youtube.com/watch?v=jCYonZey5dY&t=1007s
+https://stackoverflow.com/questions/64921910/spring-boot-jpa-how-to-retrieve-data-from-a-manytomany-table
 //--------------------------------------------------------------------------------------
