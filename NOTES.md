@@ -15,6 +15,8 @@ USEFUL -> To start:
 Users management Portal using Spring-boot, React.js, Mysql | Spring-Security, JWT, Roles, Auth
 https://www.youtube.com/watch?v=5_5oBtHWA5I or
 https://www.youtube.com/watch?v=GH7L4D8Q_ak
+jwt:
+https://medium.com/@tericcabrel/implement-jwt-authentication-in-a-spring-boot-3-application-5839e4fd8fac
 
 Username/Password Authentication:
 https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#servlet-authentication-unpwd
@@ -139,4 +141,14 @@ Many-to-many:
 https://medium.com/@arijit83work/manytomany-relationship-in-spring-boot-with-hibernate-and-jpa-35d7b4fdf3bf
 https://www.youtube.com/watch?v=jCYonZey5dY&t=1007s
 https://stackoverflow.com/questions/64921910/spring-boot-jpa-how-to-retrieve-data-from-a-manytomany-table
+
+//--------------------------------------------------------------------------------------
+Test:
+Spring Boot Unit Testing With Mockito-
+https://www.youtube.com/watch?v=jqwZthuBmZY&list=PL82C6-O4XrHcg8sNwpoDDhcxUCbFy855E&sttick=0
+
+//--------------------------------------------------------------------------------------
+Search REST API:
+https://www.javaguides.net/2022/04/search-rest-api-using-spring-boot.html
+
 //--------------------------------------------------------------------------------------

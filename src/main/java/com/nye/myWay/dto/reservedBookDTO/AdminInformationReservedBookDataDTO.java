@@ -1,6 +1,5 @@
 package com.nye.myWay.dto.reservedBookDTO;
 
-import com.nye.myWay.dto.cartItemDTOs.BookResponseUserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ReservedBookDTO {
-    private BookResponseUserDTO bookResponseUserDTO;
+@AllArgsConstructor
+public class AdminInformationReservedBookDataDTO {
+
+    private String isbn;
+    private String title;
     private LocalDateTime createdAt;
 }

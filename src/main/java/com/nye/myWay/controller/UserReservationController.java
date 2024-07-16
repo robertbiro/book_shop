@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/user/reservation")
 @CrossOrigin("*")
 @RequiredArgsConstructor
-public class ReservationController {
+public class UserReservationController {
 
     @Autowired
     private ReservationService reservationService;
